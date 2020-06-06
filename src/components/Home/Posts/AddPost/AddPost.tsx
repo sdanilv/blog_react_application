@@ -19,12 +19,12 @@ const AddPost: FC<AddPostProps> = ({ addPost, setOpen, open }) => {
   const expandHandler = () => setExpand(!expand);
   const closeHandler = () => setOpen(false);
 
-  const formik = useFormik({
+  const { resetForm, handleChange, values, submitForm } = useFormik({
     initialValues: { title: "", body: "" },
     onSubmit: values => {
       if (values.title.trim() && values.title.trim()) {
         addPost(values.title, values.body);
-        formik.resetForm();
+        resetForm();
         setOpen(false);
       }
     }
@@ -37,10 +37,10 @@ const AddPost: FC<AddPostProps> = ({ addPost, setOpen, open }) => {
       </DialogTitle>
       <DialogContent>
         <FormControl fullWidth>
-          <TextField onChange={ formik.handleChange } value={ formik.values.title }
-            autoFocus margin="dense" id="title" label="Title" />
+          <TextField onChange={ handleChange } value={ values.title }
+            autoFocus margin="dense" id="title" label="Title"/>
           <TextField
-            onChange={ formik.handleChange } value={ formik.values.body } id="body"
+            onChange={ handleChange } value={ values.body } id="body"
             placeholder="Enter your post" multiline variant="outlined"
             rows={ 10 } rowsMax={ 50 }
           />
@@ -51,7 +51,7 @@ const AddPost: FC<AddPostProps> = ({ addPost, setOpen, open }) => {
           Cancel
         </Button>
         <Button variant="contained" color="primary" endIcon={ <SendIcon/> }
-          onClick={formik.submitForm }>
+          onClick={ submitForm }>
           Add post
         </Button>
       </DialogActions>

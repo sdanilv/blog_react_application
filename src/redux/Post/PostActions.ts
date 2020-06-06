@@ -17,9 +17,10 @@ const addPostAC = (post: PostType): PostActions => ({ type: ADD_POST, post });
 const editPostAC = (post: PostType): PostActions => ({ type: EDIT_POST, post });
 const deletePostAC = (id: PostId): PostActions => ({ type: DELETE_POST, id });
 
-export const fetchPosts = (): ThunkActionType => async dispatch => {
+export const fetchPosts = (): ThunkActionType => async (dispatch, getState) => {
   const { data } = await postAPI.getAllPosts();
-  dispatch(fetchPostsAC(data));
+  if (JSON.stringify(getState().Post.posts) !== JSON.stringify(data))
+    dispatch(fetchPostsAC(data));
 };
 export const addPost = (title: string, body: string): ThunkActionType => async dispatch => {
   const { data } = await postAPI.addPost({ title, body });

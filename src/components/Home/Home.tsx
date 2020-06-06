@@ -8,22 +8,22 @@ import Posts from "./Posts/Posts";
 import AddPost from "./Posts/AddPost/AddPost";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
-
 import { homeStyle } from "./HomeStyle";
 
-export type HomeProps = { posts: Array<PostType>, fetchPosts: () => void, addPost:
-    (title: string, body: string) => void, clearOpenPost:()=>void }
+export type HomeProps = {
+  posts: Array<PostType>, fetchPosts: () => void, addPost:
+    (title: string, body: string) => void, clearOpenPost: () => void
+}
+
 const Home: FC<HomeProps> = ({ posts, fetchPosts, addPost, clearOpenPost }) => {
   const classes = homeStyle();
   const [open, setOpen] = useState(false);
   const fabClickHandler = () => setOpen(true);
 
   useEffect(() => {
-    clearOpenPost();
-  }, []);
-  useEffect(() => {
     fetchPosts();
-  }, [fetchPosts]);
+    clearOpenPost();
+  }, [fetchPosts, clearOpenPost]);
 
   return (
     <div className={ classes.wrapper }>
@@ -35,6 +35,7 @@ const Home: FC<HomeProps> = ({ posts, fetchPosts, addPost, clearOpenPost }) => {
     </div>
   );
 };
+
 const mapStateToProps = (state: GlobalState) => ({
   posts: state.Post.posts
 });
