@@ -1,31 +1,35 @@
-import React, { ChangeEvent, FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useFormik } from "formik";
 import { PostType } from "../../redux/Post/PostReducer";
 import { PostFunctionsType } from "./PostContainer";
 import Comments from "./Comments/Comments";
 import { postStyle } from "./PostStyle";
-import Paper from "@material-ui/core/Paper";
-
 import DeleteIcon from "@material-ui/icons/DeleteForever";
 import EditIcon from "@material-ui/icons/Edit";
 import SaveIcon from "@material-ui/icons/Save";
 import HomeIcon from "@material-ui/icons/Home";
-
+import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField/TextField";
 import Button from "@material-ui/core/Button";
 import Fab from "@material-ui/core/Fab";
-import { Link } from "react-router-dom";
 
 type PostProps = PostType&PostFunctionsType
 const Post: FC<PostProps> = ({ title, body, id, comments, addComment, editPost, deletePost }) => {
   const style = postStyle();
+
+  const formik = useFormik({
+    initialValues: { title, body },
+    onSubmit: values => {
+      if (values.title.trim() && values.title.trim()) {
+        editPost(id, values.title, values.body);
+        setEditMode(false);
+      }
+    }
+  });
+  useEffect(() => { formik.resetForm(); }, [title, body]);
   const [editMode, setEditMode] = useState(false);
-  const [post, setPost] = useState({ title, body });
-  const onChangeHandler = ({ target }: ChangeEvent<HTMLInputElement|HTMLTextAreaElement>) =>
-    setPost({ ...post, [target.id]: target.value });
-  const submitButtonHandler = () => {
-    editPost(id, post.title, post.body);
-    setEditMode(false);
-  };
+
   const addCommentWithId = (comments: string) => addComment(id, comments);
   const deleteHandler = () => deletePost(id);
   const editHandler = () => setEditMode(!editMode);
@@ -34,8 +38,8 @@ const Post: FC<PostProps> = ({ title, body, id, comments, addComment, editPost, 
     <div className={ style.root }>
       <h3 className={ style.title }>
         { editMode
-          ? <TextField onChange={ onChangeHandler } value={ post.title } fullWidth
-            autoFocus margin="dense" id="title" label="Title"
+          ? <TextField onChange={ formik.handleChange } value={ formik.values.title } fullWidth
+            autoFocus margin="dense" id="title" label="Title" required
           /> : title }
         <span className={ style.buttons }>
           <Link to="/"> <DeleteIcon color="error" className={ style.button } onClick={ deleteHandler }/></Link>
@@ -44,14 +48,14 @@ const Post: FC<PostProps> = ({ title, body, id, comments, addComment, editPost, 
       </h3>
 
       <Paper className={ style.body }>{ editMode ? <TextField
-        onChange={ onChangeHandler } value={ post.body } id="body" fullWidth
+        onChange={ formik.handleChange } value={ formik.values.body } id="body" fullWidth
         placeholder="Enter your post" multiline variant="outlined" rows={ 10 }
-        rowsMax={ 50 }
+        rowsMax={ 50 } required
       /> : body }
       </Paper>
 
       { editMode
-        ? <Button onClick={ submitButtonHandler }
+        ? <Button onClick={ formik.submitForm }
           variant="contained"
           color="primary"
           endIcon={ <SaveIcon/> }

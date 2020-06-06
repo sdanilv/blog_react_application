@@ -30,7 +30,7 @@ export const postStyle = makeStyles((theme: Theme) =>
       marginLeft: "auto",
       marginTop: "10px",
       position: "absolute",
-      top: 0,
+      top: 10,
       right: 25
     }
   })

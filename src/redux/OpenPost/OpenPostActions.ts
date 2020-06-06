@@ -1,19 +1,20 @@
-import { ADD_COMMENT, EDIT_OPEN_POST, RETRIEVE_POST } from "../ActionsTypes";
+import { ThunkAction } from "redux-thunk";
+import { ADD_COMMENT, CLEAR_OPEN_POST, EDIT_OPEN_POST, RETRIEVE_POST } from "../ActionsTypes";
 import { postAPI } from "../../API/postAPI";
 import { Action, GlobalState } from "../store";
-import { ThunkAction } from "redux-thunk";
 import { commentAPI } from "../../API/commentAPI";
 import { PostType, PostId, CommentType } from "./OpenPostReducer";
 
 export type OpenPostActions = Action<typeof RETRIEVE_POST, { post: PostType }>
   |Action<typeof ADD_COMMENT, { comment: CommentType }>
   |Action<typeof EDIT_OPEN_POST, { post: PostType }>
-
+  |Action<typeof CLEAR_OPEN_POST>
 export type ThunkActionType<T = void> = ThunkAction<T, GlobalState, {}, OpenPostActions>;
 
 const retrievePostAC = (post: PostType): OpenPostActions => ({ type: RETRIEVE_POST, post });
 const addCommentAC = (comment: CommentType): OpenPostActions => ({ type: ADD_COMMENT, comment });
 export const editOpenPostAC = (post: PostType): OpenPostActions => ({ type: EDIT_OPEN_POST, post });
+export const clearOpenPost = (): OpenPostActions => ({ type: CLEAR_OPEN_POST });
 
 export const retrievePost = (id: PostId): ThunkActionType => async dispatch => {
   const { data } = await postAPI.getPostWithComments(id);

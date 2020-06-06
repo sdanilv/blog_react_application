@@ -1,37 +1,34 @@
-import React, { ChangeEvent, FC, useState } from "react";
+import React, { FC } from "react";
+import { useFormik } from "formik";
 import { CommentType } from "../../../redux/Post/PostReducer";
-import FormControl from "@material-ui/core/FormControl";
-import TextField from "@material-ui/core/TextField/TextField";
-import { commentStyle } from "./CommentsStyle";
-import Paper from "@material-ui/core/Paper/Paper";
-import { Button } from "@material-ui/core";
-
+import { Button, Paper, TextField, FormControl } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
+import { commentStyle } from "./CommentsStyle";
 
 type CommentsProps = { comments: Array<CommentType>|undefined, addComment: (comment: string) => void }
 const Comments: FC<CommentsProps> = ({ comments, addComment }) => {
   const style = commentStyle();
-  const [comment, setComment] = useState("");
-  const onChangeHandler = ({ target }: ChangeEvent<HTMLInputElement|HTMLTextAreaElement>) =>
-    setComment(target.value);
-  const submitButtonHandler = () => {
-    addComment(comment);
-    setComment("");
-  };
+  const formik = useFormik({
+    initialValues: { comment: "" },
+    onSubmit: values => {
+      if (values.comment.trim()) { addComment(values.comment); }
+      formik.resetForm();
+    }
+  });
 
   return (
     <>
       <div>
-        { `${comments?.length} comment${comment.length !== 1 && "s"}` }
+        { `${comments?.length} comment${comments?.length !== 1 && "s"}` }
       </div>
       <FormControl fullWidth className={ style.form }>
         <TextField
-          onChange={ onChangeHandler } value={ comment } id="body"
+          onChange={ formik.handleChange } value={ formik.values.comment } id="comment"
           fullWidth rowsMax={ 10 }
           placeholder="Enter your comment" multiline variant="outlined" rows={ 3 }
         />
         <Button variant="contained"
-          endIcon={ <SendIcon/> } onClick={ submitButtonHandler }
+          endIcon={ <SendIcon/> } onClick={formik.submitForm}
           className={ style.button }>Send</Button>
       </FormControl>
 

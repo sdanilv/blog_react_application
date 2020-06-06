@@ -1,4 +1,4 @@
-import { ADD_COMMENT, ADD_POST, DELETE_POST, EDIT_POST, FETCH_POSTS, RETRIEVE_POST } from "../ActionsTypes";
+import { ADD_COMMENT, ADD_POST, DELETE_POST, EDIT_POST, FETCH_POSTS } from "../ActionsTypes";
 import { postAPI } from "../../API/postAPI";
 import { Action, GlobalState } from "../store";
 import { ThunkAction } from "redux-thunk";
@@ -10,7 +10,6 @@ export type PostActions = Action<typeof FETCH_POSTS, { posts: Array<PostType> }>
   |Action<typeof EDIT_POST, { post: PostType }>
   |Action<typeof DELETE_POST, { id: PostId }>
   |Action<typeof ADD_COMMENT, { comment: CommentType }>
-  |Action<typeof RETRIEVE_POST, { post: PostType }>
 export type ThunkActionType<T = void> = ThunkAction<T, GlobalState, {}, PostActions>;
 
 const fetchPostsAC = (posts: Array<PostType>): PostActions => ({ type: FETCH_POSTS, posts });
